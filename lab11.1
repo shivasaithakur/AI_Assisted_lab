@@ -1,0 +1,459 @@
+# Task-1
+# Use AI to generate a Stack class with push, pop, peek, and is_empty methods. Sample Input Code:class Stack:passExpected Output:• A functional stack implementation with all required methods anddocstrings.
+class Stack:
+    """
+    A simple implementation of a stack data structure.
+    """
+    def __init__(self):
+        """Initialize an empty stack."""
+        self.items = []
+
+    def push(self, item):
+        """Add an item to the top of the stack."""
+        self.items.append(item)
+
+    def pop(self):
+        """Remove and return the item at the top of the stack. Raises IndexError if the stack is empty."""
+        if self.is_empty():
+            raise IndexError("Pop from an empty stack")
+        return self.items.pop()
+
+    def peek(self):
+        """Return the item at the top of the stack without removing it. Raises IndexError if the stack is empty."""
+        if self.is_empty():
+            raise IndexError("Peek from an empty stack")
+        return self.items[-1]
+
+    def is_empty(self):
+        """Return True if the stack is empty, False otherwise."""
+        return len(self.items) == 0
+if __name__ == "__main__":
+    stack = Stack()
+    stack.push(1)
+    stack.push(2)
+    stack.push(3)
+    assert stack.peek() == 3
+    assert stack.pop() == 3
+    assert stack.peek() == 2
+    assert not stack.is_empty()
+    stack.pop()
+    stack.pop()
+    assert stack.is_empty()
+    try:
+        stack.pop()
+    except IndexError as e:
+        assert str(e) == "Pop from an empty stack"
+    try:
+        stack.peek()
+    except IndexError as e:
+        assert str(e) == "Peek from an empty stack"
+    print("All tests passed!")
+
+    #TASK2
+from collections import deque
+
+class Queue:
+    def __init__(self):
+        self.queue = deque()
+
+    def enqueue(self, item):
+        self.queue.append(item)
+        print(item, "added to queue")
+
+    def dequeue(self):
+        if len(self.queue) == 0:
+            print("Queue is empty")
+            return None
+        return self.queue.popleft()
+
+    def peek(self):
+        if len(self.queue) == 0:
+            print("Queue is empty")
+            return None
+        return self.queue[0]
+
+    def size(self):
+        return len(self.queue)
+
+
+q = Queue()
+q.enqueue(5)
+q.enqueue(15)
+q.enqueue(25)
+
+print("Front element:", q.peek())
+print("Dequeued:", q.dequeue())
+print("Queue size:", q.size())
+
+#TASK3 Use AI to generate a Singly Linked List with insert and displaymethods.Sample Input Code:class Node:passclass LinkedList:passExpected Output:• A working linked list implementation with clear methoddocumentation.Task Description #4 – Binary Search Tree (BST)
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None 
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def insert(self, data):
+        """Insert a new node with the given data at the end of the linked list."""
+        new_node = Node(data)
+        if not self.head:
+            self.head = new_node
+            return
+        last_node = self.head
+        while last_node.next:
+            last_node = last_node.next
+        last_node.next = new_node
+
+    def display(self):
+        """Display the contents of the linked list."""
+        current_node = self.head
+        while current_node:
+            print(current_node.data, end=' ')
+            current_node = current_node.next
+        print()
+if __name__ == "__main__":
+    linked_list = LinkedList()
+    linked_list.insert(10)
+    linked_list.insert(20)
+    linked_list.insert(30)
+    print("Linked List contents:")
+    linked_list.display()
+
+
+#TASK4Task Description #4 – Binary Search Tree (BST)Task: Use AI to create a BST with insert and in-order traversal methods.Sample Input Code:class BSTpassExpected Output:• BST implementation with recursive insert and traversal methods.
+class Node:
+    def __init__(self, key):
+        self.left = None
+        self.right = None
+        self.val = key
+
+class BST:
+    def __init__(self):
+        self.root = None
+
+    def insert(self, key):
+        """Insert a new node with the given key into the BST."""
+        if self.root is None:
+            self.root = Node(key)
+        else:
+            self._insert_recursive(self.root, key)
+
+    def _insert_recursive(self, node, key):
+        if key < node.val:
+            if node.left is None:
+                node.left = Node(key)
+            else:
+                self._insert_recursive(node.left, key)
+        else:
+            if node.right is None:
+                node.right = Node(key)
+            else:
+                self._insert_recursive(node.right, key)
+
+    def in_order_traversal(self):
+        """Perform in-order traversal of the BST and return a list of values."""
+        return self._in_order_recursive(self.root)
+
+    def _in_order_recursive(self, node):
+        res = []
+        if node:
+            res = self._in_order_recursive(node.left)
+            res.append(node.val)
+            res = res + self._in_order_recursive(node.right)
+        return res
+if __name__ == "__main__":  
+    bst = BST()
+    bst.insert(5)
+    bst.insert(3)
+    bst.insert(7)
+    bst.insert(2)
+    bst.insert(4)
+    bst.insert(6)
+    bst.insert(8)
+
+    print("In-order Traversal of BST:", bst.in_order_traversal())
+#Task5: Use AI to implement a hash table with basic insert, search, anddelete methods.Sample Input Code:class HashTable:passExpected Output:• Collision handling using chaining, with well-commented methods.
+class HashTable:
+    def __init__(self, size=10):
+        self.size = size
+        self.table = [[] for _ in range(size)]
+
+    def _hash(self, key):
+        """Generate a hash for the given key."""
+        return hash(key) % self.size
+
+    def insert(self, key, value):
+        """Insert a key-value pair into the hash table."""
+        index = self._hash(key)
+        # Check if the key already exists and update it
+        for i, (k, v) in enumerate(self.table[index]):
+            if k == key:
+                self.table[index][i] = (key, value)
+                return
+        # If the key does not exist, add a new key-value pair
+        self.table[index].append((key, value))
+
+    def search(self, key):
+        """Search for a value by its key. Returns the value or None if not found."""
+        index = self._hash(key)
+        for k, v in self.table[index]:
+            if k == key:
+                return v
+        return None
+
+    def delete(self, key):
+        """Delete a key-value pair from the hash table."""
+        index = self._hash(key)
+        for i, (k, v) in enumerate(self.table[index]):
+            if k == key:
+                del self.table[index][i]
+                return True
+        return False
+if __name__ == "__main__":  
+    hash_table = HashTable()
+    hash_table.insert("name", "Alice")
+    hash_table.insert("age", 30)
+    hash_table.insert("city", "New York")
+
+    print("Search for 'name':", hash_table.search("name"))
+    print("Search for 'age':", hash_table.search("age"))
+    print("Search for 'city':", hash_table.search("city"))
+
+    print("Deleting 'age'...")
+    hash_table.delete("age")
+    print("Search for 'age' after deletion:", hash_table.search("age"))
+
+#TASK6:Use AI to implement a graph using an adjacency list.Sample Input Code:class Graph:passExpected Output:• Graph with methods to add vertices, add edges, and displayconnections
+class Graph:
+    def __init__(self):
+        self.graph = {}
+
+    def add_vertex(self, vertex):
+        """Add a vertex to the graph."""
+        if vertex not in self.graph:
+            self.graph[vertex] = []
+
+    def add_edge(self, vertex1, vertex2):
+        """Add an edge between two vertices in the graph."""
+        if vertex1 in self.graph and vertex2 in self.graph:
+            self.graph[vertex1].append(vertex2)
+            self.graph[vertex2].append(vertex1)  # For undirected graph
+
+    def display(self):
+        """Display the graph as an adjacency list."""
+        for vertex, edges in self.graph.items():
+            print(f"{vertex}: {', '.join(edges)}")
+if __name__ == "__main__":  
+    graph = Graph()
+    graph.add_vertex("A")
+    graph.add_vertex("B")
+    graph.add_vertex("C")
+    graph.add_edge("A", "B")
+    graph.add_edge("A", "C")
+    graph.add_edge("B", "C")
+
+    print("Graph connections:")
+    graph.display()
+
+# Task-7
+# Use AI to implement a priority queue using Python’s heapq module.Expected Output:• Implementation with enqueue (priority), dequeue (highest priority),and display methods.
+import heapq
+
+class PriorityQueue:
+    def __init__(self):
+        self.queue = []
+
+    def enqueue(self, priority, item):
+        heapq.heappush(self.queue, (priority, item))
+
+    def dequeue(self):
+        if not self.queue:
+            raise IndexError("dequeue from an empty priority queue")
+        return heapq.heappop(self.queue)[1]
+
+    def display(self):
+        for priority, item in self.queue:
+            print(f"Priority: {priority}, Item: {item}")
+if __name__ == "__main__":
+    pq = PriorityQueue()
+    pq.enqueue(2, "Task 2")
+    pq.enqueue(1, "Task 1")
+    pq.enqueue(3, "Task 3")
+
+    print("Priority Queue contents:")
+    pq.display()
+
+    print("\nDequeueing items:")
+    while True:
+        try:
+            print(pq.dequeue())
+        except IndexError:
+            print("Priority Queue is empty")
+            
+            
+
+# Task-8
+# Use AI to implement a double-ended queue using collections.deque.Expected Output:• Insert and remove from both ends with docstrings.
+from collections import deque
+class Deque:
+    def __init__(self):
+        """Initialize an empty double-ended queue."""
+        self.deque = deque()
+
+    def add_front(self, item):
+        """Add an item to the front of the deque."""
+        self.deque.appendleft(item)
+
+    def add_rear(self, item):
+        """Add an item to the rear of the deque."""
+        self.deque.append(item)
+
+    def remove_front(self):
+        """Remove and return an item from the front of the deque. Raises IndexError if the deque is empty."""
+        if not self.deque:
+            raise IndexError("remove from an empty deque")
+        return self.deque.popleft()
+
+    def remove_rear(self):
+        """Remove and return an item from the rear of the deque. Raises IndexError if the deque is empty."""
+        if not self.deque:
+            raise IndexError("remove from an empty deque")
+        return self.deque.pop()
+
+    def display(self):
+        """Display the contents of the deque."""
+        print("Deque contents:", list(self.deque))
+if __name__ == "__main__":
+    d = Deque()
+    d.add_rear("Task 1")
+    d.add_rear("Task 2")
+    d.add_front("Task 0")
+
+    print("After adding tasks:")
+    d.display()
+
+    print("\nRemoving from front:", d.remove_front())
+    print("Removing from rear:", d.remove_rear())
+
+    print("\nAfter removals:")
+    d.display()
+    
+
+#TASK9Generate a solution for a Campus Resource Management System by selecting suitable data structures (Stack, Queue, Priority Queue, Linked List, BST, Graph, Hash Table, Deque) for features like attendance tracking, event registration, library borrowing, bus scheduling, and cafeteria order management. Provide a table with justifications and implement one feature as a Python program with comments.
+# Campus Resource Management System - Data Structure Selection      
+# Feature                 | Data Structure       | Justification        
+#------------------------|----------------------|---------------------- 
+# Attendance Tracking     | Hash Table           | Fast lookups for student attendance records. 
+# Event Registration     | Queue                | First-come, first-served basis for event registration.
+# Library Borrowing      | Linked List          | Dynamic list of borrowed books with easy insertion and deletion.
+# Bus Scheduling         | Graph                | Represents bus routes and stops effectively.
+# Cafeteria Order Management | Priority Queue     | Prioritize orders based on preparation time or
+# customer type (e.g., staff vs. student).
+
+# Implementing the Cafeteria Order Management feature using a Priority Queue
+import heapq
+class CafeteriaOrderManagement:
+    def __init__(self):
+        """Initialize an empty priority queue for orders."""
+        self.orders = []
+
+    def place_order(self, order_id, priority):
+        """Place a new order with a given priority."""
+        heapq.heappush(self.orders, (priority, order_id))
+        print(f"Order {order_id} placed with priority {priority}.")
+
+    def serve_order(self):
+        """Serve the highest priority order. Raises IndexError if no orders are present."""
+        if not self.orders:
+            raise IndexError("No orders to serve")
+        priority, order_id = heapq.heappop(self.orders)
+        print(f"Serving order {order_id} with priority {priority}.")
+        return order_id
+
+    def display_orders(self):
+        """Display all pending orders sorted by priority."""
+        print("Pending Orders:")
+        for priority, order_id in sorted(self.orders):
+            print(f"Order ID: {order_id}, Priority: {priority}")
+if __name__ == "__main__":
+    cafeteria = CafeteriaOrderManagement()
+    cafeteria.place_order("Order1", 2)
+    cafeteria.place_order("Order2", 1)
+    cafeteria.place_order("Order3", 3)
+
+    cafeteria.display_orders()
+
+    cafeteria.serve_order()
+    cafeteria.serve_order()
+
+    print("\nAfter serving some orders:")
+    cafeteria.display_orders()
+
+#TASK10 Generate a solution for a Smart E-Commerce Platform by selecting appropriate data structures (Stack, Queue, Priority Queue, Linked List, Binary Search Tree, Graph, Hash Table, Deque) for features such as Shopping Cart Management, Order Processing, Top-Selling Products Tracker, Product Search Engine, and Delivery Route Planning. Provide a table mapping feature → chosen data structure → justification (2–3 sentences each) and implement one feature as a working Python program with comments and docstrings.
+# Smart E-Commerce Platform - Data Structure Selection
+# Feature                     | Data Structure       | Justification
+#----------------------------|----------------------|----------------------
+# Shopping Cart Management    | Linked List          | Allows dynamic addition and removal of items in the  cart with efficient memory usage.
+# Order Processing            | Queue                | Ensures orders are processed in the order they were received, following a first-come, first-served approach.
+# Top-Selling Products Tracker | Hash Table           | Provides fast access and updates to product sales data for tracking top-selling items.
+# Product Search Engine       | Binary Search Tree   | Enables efficient searching, insertion, and deletion of products based on attributes like name or price.     
+# Delivery Route Planning     | Graph                | Represents delivery routes and locations effectively, allowing for pathfinding algorithms to optimize routes.
+# Implementing the Product Search Engine feature using a Binary Search Tree
+class ProductNode:
+    def __init__(self, product_id, name, price):
+        """Initialize a product node with ID, name, and price."""
+        self.product_id = product_id        
+        self.name = name
+        self.price = price
+        self.left = None
+        self.right = None
+class ProductSearchEngine:
+    def __init__(self):
+        """Initialize an empty binary search tree for products."""
+        self.root = None
+
+    def insert_product(self, product_id, name, price):
+        """Insert a new product into the BST based on product ID."""
+        if self.root is None:
+            self.root = ProductNode(product_id, name, price)
+        else:
+            self._insert_recursive(self.root, product_id, name, price)
+
+    def _insert_recursive(self, node, product_id, name, price):
+        if product_id < node.product_id:
+            if node.left is None:
+                node.left = ProductNode(product_id, name, price)
+            else:
+                self._insert_recursive(node.left, product_id, name, price)
+        else:
+            if node.right is None:
+                node.right = ProductNode(product_id, name, price)
+            else:
+                self._insert_recursive(node.right, product_id, name, price)
+
+    def search_product(self, product_id):
+        """Search for a product by its ID. Returns the product details or None if not found."""
+        return self._search_recursive(self.root, product_id)
+
+    def _search_recursive(self, node, product_id):
+        if node is None:
+            return None
+        if product_id == node.product_id:
+            return (node.name, node.price)
+        elif product_id < node.product_id:
+            return self._search_recursive(node.left, product_id)
+        else:
+            return self._search_recursive(node.right, product_id)
+if __name__ == "__main__":
+    search_engine = ProductSearchEngine()
+    search_engine.insert_product(101, "Laptop", 999.99)
+    search_engine.insert_product(102, "Smartphone", 499.99)
+    search_engine.insert_product(103, "Headphones", 199.99)
+
+    product = search_engine.search_product(102)
+    if product:
+        print(f"Product found: Name: {product[0]}, Price: ${product[1]}")
+    else:
+        print("Product not found.")
