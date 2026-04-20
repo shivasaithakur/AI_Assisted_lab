@@ -1,0 +1,422 @@
+
+# Task 1 
+import statistics
+
+def analyze_numbers(numbers):
+    """
+    Calculates and prints the mean, minimum, and maximum of a list of numbers.
+
+    Args:
+        numbers (list): A list of numerical values.
+    """
+    if not numbers:
+        print("The list is empty. Cannot calculate statistics.")
+        return
+
+    mean_value = statistics.mean(numbers)
+    min_value = min(numbers)
+    max_value = max(numbers)
+
+    print(f"List of numbers: {numbers}")
+    print(f"Mean: {mean_value}")
+    print(f"Minimum: {min_value}")
+    print(f"Maximum: {max_value}")
+
+# Run the function on the specified list
+my_list = [12, 7, 9, 21, 5]
+analyze_numbers(my_list)
+List of numbers: [12, 7, 9, 21, 5]
+Mean: 10.8
+Minimum: 5
+Maximum: 21
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+
+# Load the dataset
+social_df = pd.read_csv('SocialMediaTop100.csv', encoding='utf-8', engine='python')
+
+# Remove duplicate user profiles based on 'PROFILE' and 'Platform'
+social_df = social_df.drop_duplicates(subset=['PROFILE', 'Platform'])
+
+# Handle missing values: fill numeric columns with median, categorical with mode
+for col in social_df.columns:
+    if social_df[col].dtype == 'O':
+        social_df[col].fillna(social_df[col].mode()[0], inplace=True)
+    else:
+        social_df[col].fillna(social_df[col].median(), inplace=True)
+
+# Encode categorical columns
+label_encoders = {}
+for col in social_df.select_dtypes(include=['object']).columns:
+    le = LabelEncoder()
+    social_df[col] = le.fit_transform(social_df[col].astype(str))
+    label_encoders[col] = le
+
+# Show the cleaned and encoded dataframe
+social_df.head()
+---------------------------------------------------------------------------
+UnicodeDecodeError                        Traceback (most recent call last)
+Cell In[16], line 5
+      2 from sklearn.preprocessing import LabelEncoder
+      4 # Load the dataset
+----> 5 social_df = pd.read_csv('SocialMediaTop100.csv', encoding='utf-8', engine='python')
+      7 # Remove duplicate user profiles based on 'PROFILE' and 'Platform'
+      8 social_df = social_df.drop_duplicates(subset=['PROFILE', 'Platform'])
+
+File c:\Users\alish\.conda\envs\gz-env\lib\site-packages\pandas\io\parsers\readers.py:1026, in read_csv(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, dtype, engine, converters, true_values, false_values, skipinitialspace, skiprows, skipfooter, nrows, na_values, keep_default_na, na_filter, verbose, skip_blank_lines, parse_dates, infer_datetime_format, keep_date_col, date_parser, date_format, dayfirst, cache_dates, iterator, chunksize, compression, thousands, decimal, lineterminator, quotechar, quoting, doublequote, escapechar, comment, encoding, encoding_errors, dialect, on_bad_lines, delim_whitespace, low_memory, memory_map, float_precision, storage_options, dtype_backend)
+   1013 kwds_defaults = _refine_defaults_read(
+   1014     dialect,
+   1015     delimiter,
+   (...)
+   1022     dtype_backend=dtype_backend,
+   1023 )
+   1024 kwds.update(kwds_defaults)
+-> 1026 return _read(filepath_or_buffer, kwds)
+
+File c:\Users\alish\.conda\envs\gz-env\lib\site-packages\pandas\io\parsers\readers.py:620, in _read(filepath_or_buffer, kwds)
+    617 _validate_names(kwds.get("names", None))
+    619 # Create the parser.
+--> 620 parser = TextFileReader(filepath_or_buffer, **kwds)
+    622 if chunksize or iterator:
+    623     return parser
+
+File c:\Users\alish\.conda\envs\gz-env\lib\site-packages\pandas\io\parsers\readers.py:1620, in TextFileReader.__init__(self, f, engine, **kwds)
+   1617     self.options["has_index_names"] = kwds["has_index_names"]
+   1619 self.handles: IOHandles | None = None
+-> 1620 self._engine = self._make_engine(f, self.engine)
+
+File c:\Users\alish\.conda\envs\gz-env\lib\site-packages\pandas\io\parsers\readers.py:1898, in TextFileReader._make_engine(self, f, engine)
+   1895     raise ValueError(msg)
+   1897 try:
+-> 1898     return mapping[engine](f, **self.options)
+   1899 except Exception:
+   1900     if self.handles is not None:
+
+File c:\Users\alish\.conda\envs\gz-env\lib\site-packages\pandas\io\parsers\python_parser.py:133, in PythonParser.__init__(self, f, **kwds)
+    127 self._col_indices: list[int] | None = None
+    128 columns: list[list[Scalar | None]]
+    129 (
+    130     columns,
+    131     self.num_original_columns,
+    132     self.unnamed_cols,
+--> 133 ) = self._infer_columns()
+    135 # Now self.columns has the set of columns that we will process.
+    136 # The original set is stored in self.original_columns.
+    137 # error: Cannot determine type of 'index_names'
+    138 (
+    139     self.columns,
+    140     self.index_names,
+   (...)
+    145     self.index_names,  # type: ignore[has-type]
+    146 )
+
+File c:\Users\alish\.conda\envs\gz-env\lib\site-packages\pandas\io\parsers\python_parser.py:404, in PythonParser._infer_columns(self)
+    402 for level, hr in enumerate(header):
+    403     try:
+--> 404         line = self._buffered_line()
+    406         while self.line_pos <= hr:
+    407             line = self._next_line()
+
+File c:\Users\alish\.conda\envs\gz-env\lib\site-packages\pandas\io\parsers\python_parser.py:637, in PythonParser._buffered_line(self)
+    635     return self.buf[0]
+    636 else:
+--> 637     return self._next_line()
+
+File c:\Users\alish\.conda\envs\gz-env\lib\site-packages\pandas\io\parsers\python_parser.py:738, in PythonParser._next_line(self)
+    735     next(self.data)
+    737 while True:
+--> 738     orig_line = self._next_iter_line(row_num=self.pos + 1)
+    739     self.pos += 1
+    741     if orig_line is not None:
+
+File c:\Users\alish\.conda\envs\gz-env\lib\site-packages\pandas\io\parsers\python_parser.py:805, in PythonParser._next_iter_line(self, row_num)
+    802 try:
+    803     # assert for mypy, data is Iterator[str] or None, would error in next
+    804     assert self.data is not None
+--> 805     line = next(self.data)
+    806     # for mypy
+    807     assert isinstance(line, list)
+
+File c:\Users\alish\.conda\envs\gz-env\lib\codecs.py:322, in BufferedIncrementalDecoder.decode(self, input, final)
+    319 def decode(self, input, final=False):
+    320     # decode input (taking the buffer into account)
+    321     data = self.buffer + input
+--> 322     (result, consumed) = self._buffer_decode(data, self.errors, final)
+    323     # keep undecoded input until the next call
+    324     self.buffer = data[consumed:]
+
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xa0 in position 47: invalid start byte
+# Reload and preprocess the Social Media dataset with encoding fix
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+
+# Try reading with latin1 encoding to avoid UnicodeDecodeError
+social_df = pd.read_csv('SocialMediaTop100.csv', encoding='latin1', engine='python')
+
+# Remove duplicate user profiles based on 'PROFILE' and 'Platform'
+social_df = social_df.drop_duplicates(subset=['PROFILE', 'Platform'])
+
+# Handle missing values: fill numeric columns with median, categorical with mode
+for col in social_df.columns:
+    if social_df[col].dtype == 'O':
+        social_df[col].fillna(social_df[col].mode()[0], inplace=True)
+    else:
+        social_df[col].fillna(social_df[col].median(), inplace=True)
+
+# Encode categorical columns
+label_encoders = {}
+for col in social_df.select_dtypes(include=['object']).columns:
+    le = LabelEncoder()
+    social_df[col] = le.fit_transform(social_df[col].astype(str))
+    label_encoders[col] = le
+
+# Show the cleaned and encoded dataframe
+social_df.head()
+
+
+# explanation in simple words:
+# 1. We load the dataset from a CSV file.
+# 2. We remove duplicate entries based on the 'PROFILE' and 'Platform' columns to ensure each user profile is unique.
+# 3. We handle missing values by filling numeric columns with their median and categorical columns with their mode (most frequent value).
+# 4. We encode categorical columns into numeric values using LabelEncoder, which converts each unique category into a number.   
+C:\Users\alish\AppData\Local\Temp\ipykernel_35052\2200709133.py:16: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
+
+For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
+
+
+  social_df[col].fillna(social_df[col].median(), inplace=True)
+C:\Users\alish\AppData\Local\Temp\ipykernel_35052\2200709133.py:14: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
+
+For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
+
+
+  social_df[col].fillna(social_df[col].mode()[0], inplace=True)
+C:\Users\alish\AppData\Local\Temp\ipykernel_35052\2200709133.py:16: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
+
+For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
+
+
+  social_df[col].fillna(social_df[col].median(), inplace=True)
+C:\Users\alish\AppData\Local\Temp\ipykernel_35052\2200709133.py:16: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
+
+For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
+
+
+  social_df[col].fillna(social_df[col].median(), inplace=True)
+C:\Users\alish\AppData\Local\Temp\ipykernel_35052\2200709133.py:14: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
+
+For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
+
+
+  social_df[col].fillna(social_df[col].mode()[0], inplace=True)
+N	PROFILE	FOLLOWERS	POSTS	Platform
+0	1	151	539446645.0	7202.0	0
+1	2	86	473864939.0	3338.0	0
+2	3	204	364542529.0	6935.0	0
+3	4	216	355790796.0	890.0	0
+4	5	323	341579063.0	1828.0	0
+# Weather dataset preprocessing
+import pandas as pd
+import numpy as np
+
+# Load the dataset (update the path as needed)
+data = pd.read_csv('weather_forecast_data.csv')
+
+# Convert 'date' column to datetime format
+data['date'] = pd.to_datetime(data['date'], errors='coerce')
+
+# Handle missing values in 'temperature' and 'humidity' (fill with median)
+for col in ['temperature', 'humidity']:
+    if col in data.columns:
+        data[col].fillna(data[col].median(), inplace=True)
+
+# Create new features: 'season' and 'week_number'
+def get_season(month):
+    if month in [12, 1, 2]:
+        return 'Winter'
+    elif month in [3, 4, 5]:
+        return 'Spring'
+    elif month in [6, 7, 8]:
+        return 'Summer'
+    else:
+        return 'Autumn'
+
+if 'date' in data.columns:
+    data['season'] = data['date'].dt.month.apply(get_season)
+    data['week_number'] = data['date'].dt.isocalendar().week
+
+# Normalize 'rainfall' values (min-max scaling)
+if 'rainfall' in data.columns:
+    min_rain = data['rainfall'].min()
+    max_rain = data['rainfall'].max()
+    data['rainfall_normalized'] = (data['rainfall'] - min_rain) / (max_rain - min_rain)
+
+# Show the processed dataframe
+data.head()
+---------------------------------------------------------------------------
+FileNotFoundError                         Traceback (most recent call last)
+Cell In[18], line 6
+      3 import numpy as np
+      5 # Load the dataset (update the path as needed)
+----> 6 data = pd.read_csv('weather_forecast_data.csv')
+      8 # Convert 'date' column to datetime format
+      9 data['date'] = pd.to_datetime(data['date'], errors='coerce')
+
+File c:\Users\alish\.conda\envs\gz-env\lib\site-packages\pandas\io\parsers\readers.py:1026, in read_csv(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, dtype, engine, converters, true_values, false_values, skipinitialspace, skiprows, skipfooter, nrows, na_values, keep_default_na, na_filter, verbose, skip_blank_lines, parse_dates, infer_datetime_format, keep_date_col, date_parser, date_format, dayfirst, cache_dates, iterator, chunksize, compression, thousands, decimal, lineterminator, quotechar, quoting, doublequote, escapechar, comment, encoding, encoding_errors, dialect, on_bad_lines, delim_whitespace, low_memory, memory_map, float_precision, storage_options, dtype_backend)
+   1013 kwds_defaults = _refine_defaults_read(
+   1014     dialect,
+   1015     delimiter,
+   (...)
+   1022     dtype_backend=dtype_backend,
+   1023 )
+   1024 kwds.update(kwds_defaults)
+-> 1026 return _read(filepath_or_buffer, kwds)
+
+File c:\Users\alish\.conda\envs\gz-env\lib\site-packages\pandas\io\parsers\readers.py:620, in _read(filepath_or_buffer, kwds)
+    617 _validate_names(kwds.get("names", None))
+    619 # Create the parser.
+--> 620 parser = TextFileReader(filepath_or_buffer, **kwds)
+    622 if chunksize or iterator:
+    623     return parser
+
+File c:\Users\alish\.conda\envs\gz-env\lib\site-packages\pandas\io\parsers\readers.py:1620, in TextFileReader.__init__(self, f, engine, **kwds)
+   1617     self.options["has_index_names"] = kwds["has_index_names"]
+   1619 self.handles: IOHandles | None = None
+-> 1620 self._engine = self._make_engine(f, self.engine)
+
+File c:\Users\alish\.conda\envs\gz-env\lib\site-packages\pandas\io\parsers\readers.py:1880, in TextFileReader._make_engine(self, f, engine)
+   1878     if "b" not in mode:
+   1879         mode += "b"
+-> 1880 self.handles = get_handle(
+   1881     f,
+   1882     mode,
+   1883     encoding=self.options.get("encoding", None),
+   1884     compression=self.options.get("compression", None),
+   1885     memory_map=self.options.get("memory_map", False),
+   1886     is_text=is_text,
+   1887     errors=self.options.get("encoding_errors", "strict"),
+   1888     storage_options=self.options.get("storage_options", None),
+   1889 )
+   1890 assert self.handles is not None
+   1891 f = self.handles.handle
+
+File c:\Users\alish\.conda\envs\gz-env\lib\site-packages\pandas\io\common.py:873, in get_handle(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)
+    868 elif isinstance(handle, str):
+    869     # Check whether the filename is to be opened in binary mode.
+    870     # Binary mode does not support 'encoding' and 'newline'.
+    871     if ioargs.encoding and "b" not in ioargs.mode:
+    872         # Encoding
+--> 873         handle = open(
+    874             handle,
+    875             ioargs.mode,
+    876             encoding=ioargs.encoding,
+    877             errors=errors,
+    878             newline="",
+    879         )
+    880     else:
+    881         # Binary mode
+    882         handle = open(handle, ioargs.mode)
+
+FileNotFoundError: [Errno 2] No such file or directory: 'weather_forecast_data.csv'
+import pandas as pd
+from sklearn.preprocessing import MultiLabelBinarizer, MinMaxScaler
+
+# Load the dataset
+movies = pd.read_csv('IMDB-Movie-Data.csv')
+
+# Remove duplicate movie entries based on Title and Year
+movies = movies.drop_duplicates(subset=['Title', 'Year'])
+
+# Handle missing values in 'Rating' and 'Genre'
+if 'Rating' in movies.columns:
+    movies['Rating'].fillna(movies['Rating'].median(), inplace=True)
+if 'Genre' in movies.columns:
+    movies['Genre'].fillna('Unknown', inplace=True)
+
+# Encode 'Genre' as multi-hot (one-hot for each genre)
+if 'Genre' in movies.columns:
+    mlb = MultiLabelBinarizer()
+    genre_lists = movies['Genre'].str.split(',')
+    genre_encoded = mlb.fit_transform(genre_lists)
+    genre_df = pd.DataFrame(genre_encoded, columns=mlb.classes_)
+    movies = pd.concat([movies, genre_df], axis=1)
+
+# Encode 'Language' if present
+if 'Language' in movies.columns:
+    movies['Language'] = movies['Language'].astype(str)
+    movies['Language_encoded'] = movies['Language'].astype('category').cat.codes
+
+# Scale 'Rating' between 0 and 1
+if 'Rating' in movies.columns:
+    scaler = MinMaxScaler()
+    movies['Rating_scaled'] = scaler.fit_transform(movies[['Rating']])
+
+# Save the cleaned and processed dataframe to a new CSV
+movies.to_csv('IMDB-Movie-Data-processed.csv', index=False)
+
+# Show the first few rows
+print(movies.head())
+
+
+# Explanation in simple words:
+# 1. We load the movie dataset from a CSV file.
+# 2. We remove duplicate movie entries based on Title and Year.
+# 3. We handle missing values in 'Rating' and 'Genre'.
+# 4. We encode 'Genre' as multi-hot (one-hot for each genre).
+# 5. We encode 'Language' as numeric codes.
+# 6. We scale 'Rating' to be between 0 and 1 using MinMaxScaler.
+   Rank                    Title                     Genre  \
+0     1  Guardians of the Galaxy   Action,Adventure,Sci-Fi   
+1     2               Prometheus  Adventure,Mystery,Sci-Fi   
+2     3                    Split           Horror,Thriller   
+3     4                     Sing   Animation,Comedy,Family   
+4     5            Suicide Squad  Action,Adventure,Fantasy   
+
+                                         Description              Director  \
+0  A group of intergalactic criminals are forced ...            James Gunn   
+1  Following clues to the origin of mankind, a te...          Ridley Scott   
+2  Three girls are kidnapped by a man with a diag...    M. Night Shyamalan   
+3  In a city of humanoid animals, a hustling thea...  Christophe Lourdelet   
+4  A secret government agency recruits some of th...            David Ayer   
+
+                                              Actors  Year  Runtime (Minutes)  \
+0  Chris Pratt, Vin Diesel, Bradley Cooper, Zoe S...  2014                121   
+1  Noomi Rapace, Logan Marshall-Green, Michael Fa...  2012                124   
+2  James McAvoy, Anya Taylor-Joy, Haley Lu Richar...  2016                117   
+3  Matthew McConaughey,Reese Witherspoon, Seth Ma...  2016                108   
+4  Will Smith, Jared Leto, Margot Robbie, Viola D...  2016                123   
+
+   Rating   Votes  ...  Music  Musical  Mystery  Romance  Sci-Fi  Sport  \
+0     8.1  757074  ...      0        0        0        0       1      0   
+1     7.0  485820  ...      0        0        1        0       1      0   
+2     7.3  157606  ...      0        0        0        0       0      0   
+3     7.2   60545  ...      0        0        0        0       0      0   
+4     6.2  393727  ...      0        0        0        0       0      0   
+
+   Thriller  War  Western  Rating_scaled  
+0         0    0        0       0.873239  
+1         0    0        0       0.718310  
+2         1    0        0       0.760563  
+3         0    0        0       0.746479  
+4         0    0        0       0.605634  
+
+[5 rows x 33 columns]
+C:\Users\alish\AppData\Local\Temp\ipykernel_35052\352119334.py:12: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
+
+For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
+
+
+  movies['Rating'].fillna(movies['Rating'].median(), inplace=True)
+C:\Users\alish\AppData\Local\Temp\ipykernel_35052\352119334.py:14: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
+
+For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
+
+
+  movies['Genre'].fillna('Unknown', inplace=True)
